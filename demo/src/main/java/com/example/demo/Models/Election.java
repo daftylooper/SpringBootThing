@@ -1,6 +1,7 @@
 package com.example.demo.Models;
 import org.springframework.data.annotation.Id;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ public class Election {
     private Date closeDate;
     private String status;
     private List<Candidate> candidates;
+    private HashMap<Candidate, Integer> candidateVotes; //candidateId, Votes
     private Candidate winner;
 
     public Election(){}

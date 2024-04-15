@@ -1,77 +1,78 @@
 package com.example.demo.Controllers;
 
-import java.util.ArrayList;
-
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-// import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-// import org.springframework.web.bind.annotation.CrossOrigin;
-// import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.example.demo.Models.Auth;
 import com.example.demo.Models.LoginSchema;
-import com.example.demo.Models.SignUpSchema;
 import com.example.demo.Models.User;
 import com.example.demo.Services.UserService;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.Models.Candidate;
-import com.example.demo.Services.CandidateService;
-
-// import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PathVariable;
-// import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
 
-    private final UserService userService;
-    
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
-    @PostMapping("/usersignup")
-    public ResponseEntity<String> SignUpUser(@RequestBody SignUpSchema user) {
-        
-        // call some helper function from repository to save in mongodb
-        userService.SaveUser(new User(user.name, user.name, user.password));
-        String message = "User Signed Up. Saved Data!";
-        return ResponseEntity.ok(message);
+    @GetMapping("/signup")
+    public String signUp() {
+        return "signup";
     }
     
-    @PostMapping("/userlogin")
-    public ResponseEntity<Auth> LoginUser(@RequestBody LoginSchema loginUser) {
-        System.out.println("====>"+loginUser);
-        User user = userService.GetUser(loginUser.username);
-        System.out.println(">"+loginUser.password+"<>"+user.getPassword()+"<");
-        if(user.getPassword().equals(loginUser.password)){
-            System.out.println("authenticated!");
-            Auth auth = new Auth(true);
-            return ResponseEntity.ok(auth);
-        } else {
-            System.out.println("nopeeee");
-            Auth auth = new Auth(false);
-            return ResponseEntity.ok(auth);
-        }
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUp(@RequestBody LoginSchema user) {
+        String email = user.email;
+        String password = user.password;
+        String userType = getUserTypeFromEmail(email);
+        userService.saveUser(userService.createUser(email, password), userType);
+        return ResponseEntity.ok("/login");
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("something", "hallo uncle roger from the controller!");
+    public String login() {
         return "login";
     }
-    
-    @GetMapping("/signup")
-    public String signup(Model model) {
-        model.addAttribute("something", "hallo uncle roger from the controller!");
-        return "signup";
+
+    @PostMapping("/userlogin")
+    public ResponseEntity<String> login(@RequestBody LoginSchema loginUser, Model model) {
+        String email = loginUser.email;
+        String password = loginUser.password;
+        User user = userService.findByEmailAndPassword(email, password);
+        if (user != null) {
+            String userType = getUserTypeFromEmail(email);
+            String userId = user.getId();
+            String next;
+            switch (userType) {
+                case "Voter":
+                    next="/dashboard?userId="+userId;
+                    break;
+                case "Admin":
+                next="/adminDashboard?userId="+userId;
+                    break;
+                case "Candidate":
+                next="/candidateDashboard?userId="+userId;
+                    break;
+                default:
+                    next = "/login";
+            }
+            return ResponseEntity.ok(next);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+    }
+
+    private String getUserTypeFromEmail(String email) {
+        if (email.endsWith("@voter.com")) {
+            return "Voter";
+        } else if (email.endsWith("@admin.com")) {
+            return "Admin";
+        } else if (email.endsWith("@candidate.com")) {
+            return "Candidate";
+        }
+        return null;
     }
 }

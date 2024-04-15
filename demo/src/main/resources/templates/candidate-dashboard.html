@@ -96,17 +96,15 @@
   </head>
   <body>
     <div class="container center">
-      <h2>
-        Welcome to your Dashboard, <span th:text="${candidateName}"></span>!
-      </h2>
+      <h2>Welcome to your Dashboard Candidate!</h2>
     </div>
     <div class="container top-left">
       <h4>Pending Elections:</h4>
+      <input type="hidden" name="userId" th:value="${userId}" />
       <ul>
         <li th:each="election : ${pendingElections}">
           <a
-            th:href="@{/candidateDashboard/electionDetails(candidateName=${candidateName}, electionId=${election.id}
-          )}"
+            th:href="@{/candidateDashboard/electionDetails(userId=${userId},electionId=${election.id})}"
             ><span th:text="${election.name}"></span
           ></a>
         </li>
@@ -117,7 +115,7 @@
       <ul>
         <li th:each="election : ${ongoingElections}">
           <a
-            th:href="@{/candidateDashboard/electionDetails(electionId=${election.id})}"
+            th:href="@{/candidateDashboard/electionDetails(userId=${userId},electionId=${election.id})}"
             ><span th:text="${election.name}"></span
           ></a>
         </li>
@@ -128,7 +126,7 @@
       <ul>
         <li th:each="election : ${completedElections}">
           <a
-            th:href="@{/candidateDashboard/electionDetails(electionId=${election.id})}"
+            th:href="@{/candidateDashboard/electionDetails(userId=${userId},electionId=${election.id})}"
             ><span th:text="${election.name}"></span
           ></a>
         </li>

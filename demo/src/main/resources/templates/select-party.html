@@ -8,6 +8,8 @@
   <body>
     <h2>Select Party</h2>
     <form action="/joinParty" method="POST">
+      <input type="text" name="name" th:text="${name}" placeholder="Name" />
+      <input type="hidden" name="userId" th:value="${userId}" />
       <label for="party">Choose a party:</label>
       <select id="party" name="party">
         <option th:each="party : ${partyOptions}" th:text="${party}"></option>

@@ -1,4 +1,6 @@
 package com.example.demo.Services;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import com.example.demo.Models.Candidate;
 import com.example.demo.Repositories.CandidateRepository;
@@ -6,24 +8,19 @@ import com.example.demo.Repositories.CandidateRepository;
 @Service
 public class CandidateService {
     private final CandidateRepository candidateRepository;
+
     public CandidateService(CandidateRepository candidateRepository) {
         this.candidateRepository = candidateRepository;
     }
-    public Candidate createCandidate(String name) {
-        Candidate candidate = new Candidate();
-        candidate.setName(name);
-        candidateRepository.save(candidate);
-        return candidate;
+
+    public Candidate findCandidateById(String id) {
+        Optional<Candidate> optionalCandidate = candidateRepository.findById(id);
+        return optionalCandidate.orElse(null);
     }
-    public Candidate getCandidateByName(String name) {
-        return candidateRepository.findByname(name);
-    }
-    public boolean existsCandidate(String name) {
-        return getCandidateByName(name) != null;
-    }
-    public void joinParty(String candidateName, String party) {
-        Candidate candidate = candidateRepository.findByname(candidateName);
+    public void joinParty(String id, String party, String name) {
+        Candidate candidate = findCandidateById(id);
         candidate.setPartyAffiliation(party);
+        candidate.setName(name);
         candidateRepository.save(candidate);
     }
 }

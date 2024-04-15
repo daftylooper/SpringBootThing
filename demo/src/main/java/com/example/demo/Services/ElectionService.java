@@ -2,8 +2,8 @@ package com.example.demo.Services;
 import org.springframework.stereotype.Service;
 import com.example.demo.Models.Election;
 import com.example.demo.Models.Candidate;
-import com.example.demo.Repositories.CandidateRepository;
 import com.example.demo.Repositories.ElectionRepository;
+
 import java.util.List;
 import java.util.Date;
 import java.util.Optional;
@@ -11,30 +11,30 @@ import java.util.Optional;
 @Service
 public class ElectionService {
     private final ElectionRepository electionRepository;
-    private final CandidateRepository candidateRepository;
+    private final CandidateService candidateService;
 
-    public ElectionService(ElectionRepository electionRepository, CandidateRepository candidateRepository) {
+    public ElectionService(ElectionRepository electionRepository, CandidateService candidateService) {
         this.electionRepository = electionRepository;
-        this.candidateRepository = candidateRepository;
+        this.candidateService = candidateService;
     }
 
-    public void addCandidateToElection(String electionId, String candidateName) {
+    public void addCandidateToElection(String electionId, String candidateId) {
         Election election = electionRepository.findById(electionId).orElse(null);
         if (election != null) {
             List<Candidate> candidates = election.getCandidates();
-            Candidate candidate = candidateRepository.findByname(candidateName);
+            Candidate candidate = candidateService.findCandidateById(candidateId);
             candidates.add(candidate);
             election.setCandidates(candidates);
-            electionRepository.save(election);
+            electionRepository.save(election);   //CHECK IF THIS CREATES DUPLICATES
         }
     }
 
-    public void standForElection(String candidateName, String electionId) {
+    public void standForElection(String candidateId, String electionId) {
         Election election = electionRepository.findById(electionId).orElse(null);
         if (election != null) {
-            if (candidateName != null) {
-                if (!isCandidateFromSamePartyInElection(election, candidateName)) {
-                    addCandidateToElection(electionId, candidateName);
+            if (candidateId != null) {
+                if (!isCandidateFromSamePartyInElection(election, candidateId)) {
+                    addCandidateToElection(electionId, candidateId);
                     return;
                 } else {
                     System.out.println("Candidate from the same party already in the election.");
@@ -45,8 +45,8 @@ public class ElectionService {
         }
     }
     
-    private boolean isCandidateFromSamePartyInElection(Election election, String candidateName) {
-        Candidate candidate = candidateRepository.findByname(candidateName);
+    private boolean isCandidateFromSamePartyInElection(Election election, String candidateId) {
+        Candidate candidate = candidateService.findCandidateById(candidateId);
         if (candidate == null) {
             return true;
         }
