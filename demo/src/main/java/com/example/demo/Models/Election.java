@@ -1,9 +1,11 @@
 package com.example.demo.Models;
 import org.springframework.data.annotation.Id;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
+import org.springframework.stereotype.Component;
 
+import java.util.Date;
+import java.util.HashMap;
+
+@Component
 public class Election {
     @Id
     private String uid;
@@ -11,24 +13,23 @@ public class Election {
     private Date openDate;
     private Date closeDate;
     private String status;
-    private List<Candidate> candidates;
+    private HashMap<String, Integer> candidateVotes; //candidateId, Votes
     private Candidate winner;
 
     public Election(){}
 
-    public Election(String uid, String name, Date openDate, Date closeDate, String status, List<Candidate>candidates) {
+    public Election(String uid, String name, Date openDate, Date closeDate, String status) {
         this.uid = uid;
         this.name = name;
         this.openDate = openDate;
         this.closeDate = closeDate;
         this.status = status;
-        this.candidates = candidates;
     }
 
     public Election(String name) {   
         this.name = name;
         this.status = "pending";
-        this.candidates = new ArrayList<>();
+        this.candidateVotes = new HashMap<>();
     }
 
     public String getId() {
@@ -63,19 +64,19 @@ public class Election {
         this.status = status;
     }
 
-    public List<Candidate> getCandidates() {
-        return candidates;
-    }
-
-    public void setCandidates(List<Candidate> candidates) {
-        this.candidates = candidates;
-    }
-
     public Candidate getWinner() {
         return winner;
     }
 
     public void setWinner(Candidate winner) {
         this.winner = winner;
+    }
+
+    public HashMap<String, Integer> getCandidateVotes() {
+        return candidateVotes;
+    }
+
+    public void setCandidateVotes(HashMap<String, Integer> candidateVotes) {
+        this.candidateVotes = candidateVotes;
     }
 }

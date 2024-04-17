@@ -1,92 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #error-message {
-            color: red;
-            display: none;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #error-message {
+        color: red;
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h2>Login</h2>
-        <!-- <div id="error-message">Incorrect username or password</div> -->
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="submitForm()">Login</button>
+      <h2>Login</h2>
+      <!-- <div id="error-message">Incorrect username or password</div> -->
+      <input type="text" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="submitForm()">Login</button>
     </div>
-</body>
-<script>
-    function submitForm(){
-        console.log("pressed!")
+  </body>
+  <script>
+    function submitForm() {
+      var username = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
 
-        var username = document.getElementById("username").value;
-        var password = document.getElementById("password").value;
-
-        fetch("/userlogin", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": 'application/json'
-            },
-            body: JSON.stringify({"username": username, "password": password})
+      fetch("/userlogin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ email: username, password: password }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.text(); // Assuming the response body contains the next URL as a string
+          } else {
+            throw new Error("Login failed: " + response.statusText);
+          }
         })
-        .then(response => {
-            if (response.ok) {
-                response.json().then(json => {
-                    if(json.auth) {
-                        location.href = "http://localhost:8080/dashboard";
-                    } else {
-                        location.href = "http://localhost:8080/login"
-                    }
-                });
-            }
+        .then((nextUrl) => {
+          console.log("Redirecting to:", nextUrl);
+          window.location.href = "http://localhost:8080" + nextUrl;
         })
-        .catch(error => {
-            // Handle errors
-            console.error("Error:", error);
+        .catch((error) => {
+          console.error("Error:", error);
         });
     }
-</script>
+  </script>
 </html>

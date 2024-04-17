@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface ElectionRepository extends MongoRepository<Election, String> {
     List<Election> findByStatus(String status);
+    @SuppressWarnings("null")
     Optional<Election> findById(String id);
 }
