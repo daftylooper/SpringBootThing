@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Models.LoginSchema;
-import com.example.demo.Models.User;
+import com.example.demo.Models.Patterns.UserFactory;
 import com.example.demo.Services.UserService;
 
 
@@ -41,7 +41,7 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody LoginSchema loginUser, Model model) {
         String email = loginUser.email;
         String password = loginUser.password;
-        User user = userService.findByEmailAndPassword(email, password);
+        UserFactory user = userService.findByEmailAndPassword(email, password);
         if (user != null) {
             String userType = getUserTypeFromEmail(email);
             String userId = user.getId();

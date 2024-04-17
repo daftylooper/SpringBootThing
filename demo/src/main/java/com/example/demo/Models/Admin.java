@@ -1,13 +1,21 @@
 package com.example.demo.Models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Component;
+
+import com.example.demo.Models.Patterns.UserFactory;
+
 import java.util.UUID;
 
-public class Admin implements User {
+@Component
+public class Admin implements UserFactory {
     @Id
     private String id;
     private String email;
     private String password;
+
+    public Admin() {
+    };
 
     public Admin(String email, String password) {
         this.email = email;

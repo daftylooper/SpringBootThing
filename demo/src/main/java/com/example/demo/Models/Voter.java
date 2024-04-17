@@ -1,22 +1,30 @@
 package com.example.demo.Models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Component;
 
+import com.example.demo.Models.Patterns.UserFactory;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Voter implements User {
+@Component
+public class Voter implements UserFactory {
     
     @Id
     private String id;
     private String email;
     private String password;
-    private List<Election> elections; //Elections voted for
+    private List<String> elections; //Elections voted for
+
+    public Voter(){}
 
     public Voter(String email, String password) {
         this.email = email;
         this.password = password;
         this.id = UUID.randomUUID().toString();
+        this.elections = new ArrayList<>(); 
     }
 
     public String getId() {
@@ -41,5 +49,9 @@ public class Voter implements User {
 
     public void setPassword(String password) {
         this.password = password; // You may want to hash the password before setting it
+    }
+
+    public List<String> getElections() {
+        return elections;
     }
 }

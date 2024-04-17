@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.example.demo.Models.Admin;
 
 public interface AdminRepository extends MongoRepository<Admin, String> {
+    @SuppressWarnings("null")
     Optional<Admin> findById(String id);
 
     Admin findByEmail(String email);

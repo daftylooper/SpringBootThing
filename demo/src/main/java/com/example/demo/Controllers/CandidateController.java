@@ -41,9 +41,7 @@ public class CandidateController {
             if (candidate==null || candidate.getPartyAffiliation() == null || candidate.getPartyAffiliation().isEmpty()) {
                 return "redirect:/selectParty?userId=" + userId;
             } else {
-                System.out.println(userId);
                 return "redirect:/election/candidateDashboard?userId=" + userId;
             }
         }
-        
     }

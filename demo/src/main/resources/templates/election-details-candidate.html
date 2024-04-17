@@ -63,8 +63,11 @@
     <h3 th:text="${election.name}"></h3>
     <h4>Candidates:</h4>
     <ul>
-      <li th:each="candidate : ${election.candidates}">
-        <span th:text="${candidate.name}"></span>
+      <li th:each="entry : ${candidatesVotes}">
+        <td th:each="innerEntry : ${entry.value.entrySet()}">
+          <span th:text="${innerEntry.key}"></span> - Votes:
+          <span th:text="${innerEntry.value}"></span>
+        </td>
       </li>
     </ul>
     <form
@@ -84,7 +87,7 @@
       th:text="${election.status}"
     ></p>
     <p th:if="${election.status == 'completed'}" class="winner">
-      Winner: <span th:text="${election.winner}"></span>
+      Winner: <span th:text="${election.winner.name}"></span>
     </p>
   </body>
 </html>
